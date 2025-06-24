@@ -1,9 +1,10 @@
 'use client'
 
 import { createClient } from '@/utils/supabase/client'
-import { Session, User } from '@supabase/supabase-js'
+import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   session: Session | null
@@ -12,6 +13,7 @@ interface AuthContextType {
   error: string | null
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
+  resetPassword: (email: string) => Promise<string | null>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -33,9 +35,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     getSession()
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        setSession(session);
+      }
+    );
 
     return () => {
       listener.subscription.unsubscribe()
@@ -74,8 +78,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false)
   }
 
+  const resetPassword = async (email: string): Promise<string | null> => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'http://localhost:3000/resetPassword' 
+    })
+
+    if (error) return error.message
+    return null
+  }
+
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, error, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, error, signIn, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )

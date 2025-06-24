@@ -123,7 +123,7 @@ export default function Stock() {
             <Dialog open={openModal} onOpenChange={setOpenModal}>
               {user?.user_metadata.role === 'admin' && (
                 <DialogTrigger asChild>
-                  <Button className="bg-white text-black hover:bg-gray-100 font-medium px-6">
+                  <Button className="cursor-pointer bg-white text-black hover:bg-gray-100 font-medium px-6">
                     <Package className="w-5 h-5 mr-2" />
                     Adicionar Produto
                   </Button>
@@ -205,7 +205,7 @@ export default function Stock() {
                   <div className="flex gap-3 mt-8">
                     <Button
                       onClick={handleAddProduct}
-                      className="flex-1 bg-neutral-700 hover:bg-neutral-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2"
+                      className="cursor-pointer flex-1 bg-neutral-700 hover:bg-neutral-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2"
                     >
                       <Plus className="w-5 h-5" /> Adicionar Produto
                     </Button>
@@ -229,7 +229,7 @@ export default function Stock() {
                 filteredProducts.map((product, index) => (
                   <TableRow
                     key={product.id}
-                    className={`border-neutral-700 hover:bg-neutral-800 ${index % 2 === 0 ? 'bg-black' : 'bg-neutral-900'
+                    className={`cursor-pointer border-neutral-700 hover:bg-neutral-800 ${index % 2 === 0 ? 'bg-black' : 'bg-neutral-900'
                       }`}
                     onClick={() => [setProductEdit(product), setEditingProduct(true)]}
                   >
@@ -245,6 +245,7 @@ export default function Stock() {
                         <Button
                           size="sm"
                           variant="destructive"
+                          className='cursor-pointer'
                           onClick={(e) => {
                             e.stopPropagation()
                             setTypeQuantity('Remover')
@@ -257,7 +258,7 @@ export default function Stock() {
                         </Button>
                         <Button
                           size="sm"
-                          className="bg-green-500 hover:bg-green-600"
+                          className="cursor-pointer bg-green-500 hover:bg-green-600"
                           onClick={(e) => {
                             e.stopPropagation()
                             setTypeQuantity('Adicionar')

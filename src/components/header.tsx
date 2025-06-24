@@ -1,32 +1,34 @@
-'use client'
+"use client"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Package, FileText, ShoppingCart, BarChart2, Settings, LogOut } from "lucide-react"
+import { Package, FileText, ShoppingCart, BarChart2, Settings, LogOut, UserSearch, UserPlus } from "lucide-react"
 import UserDropdown from "./user"
 import { useAuth } from "@/context/AuthContext"
+import AddNovoFuncionario from "./addNovoFuncionario"
+import ListaFuncionarioModal from "./listFuncionarios"
+import { Button } from "./ui/button"
 
 const menuItems = [
   { name: "Estoque", icon: Package, path: "/" },
-  { name: "Orçamentos", icon: FileText, path: "/orçamentos" },
-  { name: "Pedidos", icon: ShoppingCart, path: "/pedidos" },
-  { name: "Relatórios", icon: BarChart2, path: "/relatorios" },
-  { name: "Configurações", icon: Settings, path: "/configuracoes" },
+  { name: "Orçamentos", icon: FileText, path: "/orçamentos", disable: true },
+  { name: "Pedidos", icon: ShoppingCart, path: "/pedidos", disable: true },
+  { name: "Relatórios", icon: BarChart2, path: "/relatorios", disable: true },
+  { name: "Configurações", icon: Settings, path: "/configuracoes", disable: true },
 ]
 
 export default function Header() {
   const [activeItem, setActiveItem] = useState("Estoque")
-  const {user, signOut} = useAuth();
+  const { signOut } = useAuth()
   const router = useRouter()
+  const [novoFuncionarioModal, setNovoFuncionarioModal] = useState(false)
+  const [listaFuncionariosModal, setListaFuncionarioModal] = useState(false)
+
+  const {user} = useAuth()
 
   const handleLogout = async () => {
     await signOut()
     router.push("/login")
-  }
-
-  const userData = {
-    name: user?.user_metadata.full_name ||  "Usuário",
-    email: user?.email || "",
   }
 
   return (
@@ -37,7 +39,25 @@ export default function Header() {
             <Package className="w-10 h-10 text-white" strokeWidth={1.5} />
             <h1 className="text-2xl font-bold">Atitude Papelaria</h1>
           </div>
-          <UserDropdown userName={userData.name} userEmail={userData.email} />
+          <div className="flex flex-row gap-2 items-center">
+            {user?.user_metadata.role === 'admin' && 
+            <div className="flex flex-row gap-2 item-center">
+              <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setListaFuncionarioModal(true)} className="rounded-full border-0 bg-transparent hover:bg-gray-800 cursor-pointer">
+                <UserSearch className="h-4 w-4 text-white"/> 
+              </Button>
+              <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setNovoFuncionarioModal(true)} className="rounded-full border-0 bg-transparent hover:bg-gray-800 cursor-pointer">
+                <UserPlus className="h-4 w-4 text-white"/> 
+              </Button>
+            </div>
+            }
+            <UserDropdown />
+          </div>
         </div>
       </div>
 
@@ -61,11 +81,14 @@ export default function Header() {
               </button>
             ))}
           </div>
-          <button onClick={handleLogout} className="p-2 rounded-md hover:bg-gray-800" title="Sair">
+          <button onClick={handleLogout} className="p-2 rounded-md hover:bg-gray-800 cursor-pointer" title="Sair">
             <LogOut className="w-5 h-5" />
           </button>
         </nav>
       </div>
+
+      <AddNovoFuncionario open={novoFuncionarioModal} setOpen={setNovoFuncionarioModal}/>
+      <ListaFuncionarioModal open={listaFuncionariosModal} setOpen={(setListaFuncionarioModal)}/>
 
       <div className="border-t border-gray-500 w-full"></div>
     </header>

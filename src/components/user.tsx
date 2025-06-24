@@ -8,12 +8,10 @@ import { User } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 
 interface UserDropdownProps {
-  userName: string
-  userEmail: string
   className?: string
 }
 
-export default function UserDropdown({ userName, userEmail, className }: UserDropdownProps) {
+export default function UserDropdown({ className }: UserDropdownProps) {
   const [open, setOpen] = useState(false)
   const {user} = useAuth();
 
@@ -23,7 +21,7 @@ export default function UserDropdown({ userName, userEmail, className }: UserDro
         <Button
           variant="outline"
           size="icon"
-          className={cn("rounded-full border-0 bg-transparent hover:bg-gray-800", className)}
+          className={cn("rounded-full border-0 bg-transparent hover:bg-gray-800 cursor-pointer", className)}
         >
           <User className="h-5 w-5 text-white" />
         </Button>
@@ -32,15 +30,15 @@ export default function UserDropdown({ userName, userEmail, className }: UserDro
         <div className="flex flex-col space-y-1">
           <p className="text-sm font-medium">
             <span className="text-muted-foreground">Nome: </span>
-            {userName}
+            {user?.user_metadata.full_name}
           </p>
           <p className="text-sm font-medium">
             <span className="text-muted-foreground">Email: </span>
-            {userEmail}
+            {user?.email}
           </p>
           <p className="text-sm font-medium">
             <span className="text-muted-foreground">Cargo: </span>
-            {user?.user_metadata.role === 'admin' ? 'Gerente' : 'Funcionario'}
+            {user?.user_metadata.role === 'admin' ? 'Gerente' : 'Funcionário'}
           </p>
         </div>
       </DropdownMenuContent>
